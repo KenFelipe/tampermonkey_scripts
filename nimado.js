@@ -53,9 +53,9 @@
       #contentContainer       { ${nondisplaycss} }
       #container.ytd-masthead { ${nondisplaycss} }
 
-      #chat         { ${nonspacecss} }
       #primary      { ${nonspacecss} }
       #page-manager { ${nonspacecss} }
+      #chat         { ${nonspacecss} }
 
       ytd-live-chat-frame {
         position  : fixed !important;
@@ -75,7 +75,7 @@
     var mainhead = document.getElementsByTagName('head')[0]
     mainhead.appendChild(mainstyle);
 
-    var videoframe = document.getElementsByTagName('video')[0]
+    var videoframe = document.querySelector('#player.ytd-watch-flexy')
     var videoframeheight = videoframe.offsetHeight
 
     var desiredchatwindowsize = window.innerHeight - videoframeheight
@@ -127,6 +127,7 @@
     chathead.appendChild(chatstyle);
 
     toggle.style.right = '10px'
+
     // hidden toggle after clicked
     // toggle.style = nondisplaycss
   }
