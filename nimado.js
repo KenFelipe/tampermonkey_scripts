@@ -35,6 +35,18 @@
     //   Mainframe   //
     ///////////////////
     var maincss = `
+      body {
+        position: fixed !important;
+        top     : 0px   !important;
+        bottom  : 0px   !important;
+        left    : 0px   !important;
+        right   : 0px   !important;
+      }
+
+      ::-webkit-scrollbar {
+        display : none  !important;
+      }
+
       video                   { ${fullsizecss} }
       .html5-video-container  { ${fullsizecss} }
 
@@ -44,6 +56,17 @@
       #chat         { ${nonspacecss} }
       #primary      { ${nonspacecss} }
       #page-manager { ${nonspacecss} }
+
+      ytd-live-chat-frame {
+        position  : fixed !important;
+        bottom    : -1px  !important;
+        right     : -1px  !important;
+        left      : -1px  !important;
+        z-index   : 10000 !important;
+        min-height: auto  !important;
+      }
+
+      #show-hide-button { ${nondisplaycss} }
     `
 
     var mainstyle = document.createElement('style')
@@ -52,16 +75,48 @@
     var mainhead = document.getElementsByTagName('head')[0]
     mainhead.appendChild(mainstyle);
 
+    var videoframe = document.getElementsByTagName('video')[0]
+    var videoframeheight = videoframe.offsetHeight
+
+    var desiredchatwindowsize = window.innerHeight - videoframeheight
+
+    var chatwindow = document.getElementsByTagName('ytd-live-chat-frame')[0]
+    chatwindow.style = `height: ${desiredchatwindowsize + 2}px;`
+
     ///////////////////
     //   Chatframe   //
     ///////////////////
     var chatframe = document.getElementById('chatframe').contentWindow.document
 
     var chatcss = `
-      yt-live-chat-header-renderer { ${nondisplaycss} }
+      yt-live-chat-app {
+        min-height: auto !important;
+      }
+
+      yt-live-chat-header-renderer { 
+        ${nondisplaycss} 
+      }
 
       #container.yt-live-chat-ticker-renderer {
         padding-top: 8px !important;
+      }
+      
+      yt-live-chat-message-input-renderer {
+        padding-top: 12px !important;
+        padding-bottom: 8px !important;
+      }
+
+      #buttons.yt-live-chat-message-input-renderer {
+        ${nondisplaycss}
+      }
+
+      #item-scroller::-webkit-scrollbar {
+        display: none !important;
+      }
+
+      #item-scroller {
+        -ms-overflow-style: none !important;
+        scrollbar-width   : none !important;
       }
     `
 
@@ -71,6 +126,8 @@
     var chathead = chatframe.getElementsByTagName('head')[0]
     chathead.appendChild(chatstyle);
 
+    toggle.style.right = '10px'
+    // hidden toggle after clicked
     // toggle.style = nondisplaycss
   }
 
