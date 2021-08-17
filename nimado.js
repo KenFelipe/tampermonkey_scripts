@@ -6,169 +6,185 @@
 // @author       Suzuki Minato
 // @include      https://www.youtube.com/watch*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
-// @grant        none
+// @grant        noe
 // ==/UserScript==
 
 (function () {
   'use strict';
 
   // Your code here...
-  var toggleLabel = '窓'
+  const css = {
+    noDisplay : 'display: none !important;',
+    noMargin  : 'margin : 0    !important;',
+    noPadding : 'padding: 0    !important;',
+    fullWidth : 'width  : 100% !important;',
+    fullHeight: 'height : 100% !important;',
+  };
+  css.noSpace = css.noMargin + css.noPadding;
+  css.fullSize = css.fullWidth + css.fullHeight;
 
-  var ontoggle = function() {
-    if (!document.getElementById('container')
-      || !document.getElementById('chatframe')) {
-      alert('Wait until load content...')
-      return
+  const formAdjustButton = () => {
+    const label = '窓';
+
+    const button = document.createElement('a');
+    button.innerText = label;
+
+    button.style = `
+      display: block;
+      cursor: pointer;
+
+      position: fixed;
+      bottom: 10px;
+      right: 0px;
+      z-index: 10000;
+
+      width: 20px:
+      height: 20px;
+      padding: 6px;
+
+      font-size: 2.0rem;
+      border: 1px solid #eee;
+      border-radius: 50%;
+
+      color: #eee;
+      background: transparent;
+      transition: all .7s ease;
+    `;
+
+    const adjustMainFrame = () => {
+      const mainFrameCss = `
+        body {
+          position: fixed !important;
+          top     : 0px   !important;
+          bottom  : 0px   !important;
+          left    : 0px   !important;
+          right   : 0px   !important;
+        }
+
+        ::-webkit-scrollbar {
+          display : none  !important;
+        }
+
+        video                   { ${css.fullSize} }
+        .html5-video-container  { ${css.fullSize} }
+
+        #contentContainer       { ${css.noDisplay} }
+        #container.ytd-masthead { ${css.noDisplay} }
+
+        #primary      { ${css.noSpace} }
+        #page-manager { ${css.noSpace} }
+        #chat         { ${css.noSpace} }
+
+        ytd-live-chat-frame {
+          position  : fixed !important;
+          bottom    : -1px  !important;
+          right     : -1px  !important;
+          left      : -1px  !important;
+          z-index   : 10000 !important;
+          min-height: auto  !important;
+        }
+
+        #show-hide-button { ${css.noDisplay} }
+      `;
+
+      const mainStyle = document.createElement('style');
+      mainStyle.appendChild(document.createTextNode(mainFrameCss));
+
+      const mainHeadTag = document.getElementsByTagName('head')[0];
+      mainHeadTag.appendChild(mainStyle);
     }
 
-    var nondisplaycss = 'display: none !important;'
-    var nonmargincss  = 'margin : 0    !important;'
-    var nonpaddingcss = 'padding: 0    !important;'
-    var wfullcss      = 'width  : 100% !important;' 
-    var hfullcss      = 'height : 100% !important;'
-
-    var nonspacecss   = nonmargincss + nonpaddingcss
-    var fullsizecss   = wfullcss + hfullcss
-
-    ///////////////////
-    //   Mainframe   //
-    ///////////////////
-    var maincss = `
-      body {
-        position: fixed !important;
-        top     : 0px   !important;
-        bottom  : 0px   !important;
-        left    : 0px   !important;
-        right   : 0px   !important;
+    const adjustChatFrame = () => {
+      if (!document.getElementById('chatframe')) {
+        alert('no chatframe.');
+        return;
       }
+      const chatFrame = document.getElementById('chatframe').contentWindow.document;
 
-      ::-webkit-scrollbar {
-        display : none  !important;
-      }
+      const chatFrameCss = `
+        yt-live-chat-app {
+          min-height: auto !important;
+        }
 
-      video                   { ${fullsizecss} }
-      .html5-video-container  { ${fullsizecss} }
+        yt-live-chat-header-renderer { 
+          ${css.noDisplay} 
+        }
 
-      #contentContainer       { ${nondisplaycss} }
-      #container.ytd-masthead { ${nondisplaycss} }
+        #container.yt-live-chat-ticker-renderer {
+          padding-top: 8px !important;
+        }
+        
+        yt-live-chat-message-input-renderer {
+          padding-top: 12px !important;
+          padding-bottom: 8px !important;
+        }
 
-      #primary      { ${nonspacecss} }
-      #page-manager { ${nonspacecss} }
-      #chat         { ${nonspacecss} }
+        #buttons.yt-live-chat-message-input-renderer {
+          ${css.noDisplay}
+        }
 
-      ytd-live-chat-frame {
-        position  : fixed !important;
-        bottom    : -1px  !important;
-        right     : -1px  !important;
-        left      : -1px  !important;
-        z-index   : 10000 !important;
-        min-height: auto  !important;
-      }
+        #item-scroller::-webkit-scrollbar {
+          display: none !important;
+        }
 
-      #show-hide-button { ${nondisplaycss} }
-    `
+        #item-scroller {
+          -ms-overflow-style: none !important;
+          scrollbar-width: none !important;
+        }
+      `;
 
-    var mainstyle = document.createElement('style')
-    mainstyle.appendChild(document.createTextNode(maincss))
+      const chatStyle = chatFrame.createElement('style');
+      chatStyle.appendChild(chatFrame.createTextNode(chatFrameCss));
 
-    var mainhead = document.getElementsByTagName('head')[0]
-    mainhead.appendChild(mainstyle);
+      const chatHead = chatFrame.getElementsByTagName('head')[0];
+      chatHead.appendChild(chatStyle);;
+    }
 
-    var videoframe = document.querySelector('#player.ytd-watch-flexy')
-    var videoframeheight = videoframe.offsetHeight
+    const tweakChatFrameSize = () => {
+      const videoFrame = document.querySelector('#player.ytd-watch-flexy');
+      const videoFrameHeight = videoFrame.offsetHeight;
 
-    var desiredchatwindowsize = window.innerHeight - videoframeheight
+      const desiredChatWindowSize = window.innerHeight - videoFrameHeight;
 
-    var chatwindow = document.getElementsByTagName('ytd-live-chat-frame')[0]
-    chatwindow.style = `height: ${desiredchatwindowsize + 2}px;`
+      const chatWindow = document.getElementsByTagName('ytd-live-chat-frame')[0];
+      chatWindow.style = `height: ${desiredChatWindowSize + 2}px;`;
+    }
 
-    ///////////////////
-    //   Chatframe   //
-    ///////////////////
-    var chatframe = document.getElementById('chatframe').contentWindow.document
+    button.addEventListener('click', () => {
+      adjustChatFrame();
+      adjustMainFrame();
+      tweakChatFrameSize();
+      button.style.right = '10px';
+    });
 
-    var chatcss = `
-      yt-live-chat-app {
-        min-height: auto !important;
-      }
+    button.addEventListener('mouseout', function() {
+      this.style.color = '#eee';
+      this.style.background = 'transparent';
+    });
 
-      yt-live-chat-header-renderer { 
-        ${nondisplaycss} 
-      }
+    button.addEventListener('mouseover', function() {
+      this.style.color = '#222';
+      this.style.background = '#eee';
+    });
 
-      #container.yt-live-chat-ticker-renderer {
-        padding-top: 8px !important;
-      }
-      
-      yt-live-chat-message-input-renderer {
-        padding-top: 12px !important;
-        padding-bottom: 8px !important;
-      }
+    document.querySelectorAll('ytd-app')[0].appendChild(button);
+  };
 
-      #buttons.yt-live-chat-message-input-renderer {
-        ${nondisplaycss}
-      }
 
-      #item-scroller::-webkit-scrollbar {
-        display: none !important;
-      }
+  // Toggle SuperChat History
 
-      #item-scroller {
-        -ms-overflow-style: none !important;
-        scrollbar-width   : none !important;
-      }
-    `
 
-    var chatstyle = chatframe.createElement('style')
-    chatstyle.appendChild(chatframe.createTextNode(chatcss))
 
-    var chathead = chatframe.getElementsByTagName('head')[0]
-    chathead.appendChild(chatstyle);
+  // Toggle SuperChat Send
 
-    toggle.style.right = '10px'
 
-    // hidden toggle after clicked
-    // toggle.style = nondisplaycss
-  }
 
-  var toggle = document.createElement('a');
-  toggle.innerText = toggleLabel
-  toggle.style = `
-    display: block;
-    cursor: pointer;
-
-    position: fixed;
-    bottom: 10px;
-    right: 0px;
-    z-index: 10000;
-
-    width: 20px:
-    height: 20px;
-    padding: 6px;
-
-    font-size: 2.0rem;
-    border: 1px solid #eee;
-    border-radius: 50%;
-
-    color: #eee;
-    background: transparent;
-    transition: all .7s ease;
-  `
-
-  toggle.addEventListener('mouseout', function() {
-    this.style.color = '#eee'
-    this.style.background = 'transparent'
-  })
-
-  toggle.addEventListener('mouseover', function() {
-    this.style.color = '#222'
-    this.style.background = '#eee'
-  })
-
-  toggle.addEventListener('click', ontoggle)
-  document.querySelectorAll('ytd-app')[0].appendChild(toggle)
+  //
+  //
+  formAdjustButton()
+  //
+  //
 
   // log
-  console.log('Nimado script executed...')
+  console.log('Nimado script executed...');
 })();
