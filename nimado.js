@@ -83,7 +83,7 @@
 
   const formWrapper = () => {
     const wrapper = document.createElement('div');
-    wrapper.id = 'nimado-wrapper'
+    wrapper.id = 'nimado-wrapper';
 
     document.querySelectorAll('ytd-app')[0].appendChild(wrapper);
   }
@@ -181,7 +181,7 @@
       chatStyle.appendChild(chatFrame.createTextNode(chatFrameCss));
 
       const chatHead = chatFrame.getElementsByTagName('head')[0];
-      chatHead.appendChild(chatStyle);;
+      chatHead.appendChild(chatStyle);
     };
 
     const tweakChatFrameSize = () => {
@@ -203,10 +203,10 @@
       adjustMainFrame();
       tweakChatFrameSize();
       enableOtherFeature();
-      document.getElementById('nimado-wrapper').classList.add('nimado-active')
+      document.getElementById('nimado-wrapper').classList.add('nimado-active');
     });
 
-    document.getElementById('nimado-wrapper').appendChild(button)
+    document.getElementById('nimado-wrapper').appendChild(button);
   };
 
 
@@ -241,22 +241,17 @@
       }
     });
 
-    document.getElementById('nimado-wrapper').appendChild(toggle)
+    document.getElementById('nimado-wrapper').appendChild(toggle);
   }
 
 
   // Toggle Send Chat
 
 
-
-  //
-  //
   init();
   formWrapper();
   formAdjustButton();
   toggleSuperChatHistory();
-  //
-  //
 
   // log
   console.log('Nimado script executed...');
