@@ -196,6 +196,14 @@
 
     const enableOtherFeature = () => {
       document.getElementById('toggle-supper-chat-log').classList.remove('nimado-disabled');
+      
+      const chatFrame = document.getElementById('chatframe')?.contentWindow?.document;
+      const sendMessageRow = chatFrame.getElementById('live-chat-message-input');
+
+      if(!sendMessageRow) {
+        return;
+      }
+      document.getElementById('toggle-send-chat').classList.remove('nimado-disabled');
     };
 
     button.addEventListener('click', () => {
@@ -229,7 +237,7 @@
         return;
       }
 
-      const chatFrame = document.getElementById('chatframe').contentWindow.document;;
+      const chatFrame = document.getElementById('chatframe').contentWindow.document;
       const superChatLog = chatFrame.getElementById('ticker');
 
       if(toggle.classList.contains('nimado-active')) {
@@ -246,12 +254,46 @@
 
 
   // Toggle Send Chat
+  const toggleSendMessage = () => {
+    const label = 'M';
+
+    const toggle = document.createElement('a');
+    toggle.innerText = label;
+    toggle.id = 'toggle-send-chat'
+
+    toggle.classList.add('nimado-button');
+    toggle.classList.add('nimado-toggle');
+    toggle.classList.add('nimado-active');
+    toggle.classList.add('nimado-disabled');
+
+    toggle.addEventListener('click', () => {
+      if (!document.getElementById('chatframe')) {
+        alert('no chatframe.');
+        return;
+      }
+
+      const chatFrame = document.getElementById('chatframe')?.contentWindow?.document;
+      const sendMessageRow = chatFrame.getElementById('live-chat-message-input');
+
+      if(toggle.classList.contains('nimado-active')) {
+        toggle.classList.remove('nimado-active');
+        sendMessageRow.style = `${css.noDisplay}`;
+      } else {
+        toggle.classList.add('nimado-active');
+        sendMessageRow.style = '';
+      }
+    });
+
+    document.getElementById('nimado-wrapper').appendChild(toggle);
+  }
 
 
   init();
   formWrapper();
   formAdjustButton();
   toggleSuperChatHistory();
+  toggleSendMessage();
+
 
   // log
   console.log('Nimado script executed...');
